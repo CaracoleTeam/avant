@@ -57,7 +57,7 @@ void setup() {
       Acc_rawY=(Wire.read()<<8|Wire.read())/4096.0 ;
       Acc_rawZ=(Wire.read()<<8|Wire.read())/4096.0 ;
 
-      
+       
       /*---X---*/
       Acc_angle_error_x = Acc_angle_error_x + ((atan((Acc_rawY)/sqrt(pow((Acc_rawX),2) + pow((Acc_rawZ),2)))*rad_to_deg));
       /*---Y---*/
@@ -76,8 +76,9 @@ void setup() {
 
 
 
-
-
+int steps = 0 ;
+bool dandoPassada = false;
+long int    startTemp = 0;
 void loop() {
   //////////////////////////////////////Acc read/////////////////////////////////////
 
@@ -101,7 +102,6 @@ void loop() {
  Acc_angle_x = (atan((Acc_rawY)/sqrt(pow((Acc_rawX),2) + pow((Acc_rawZ),2)))*rad_to_deg) - Acc_angle_error_x;
  /*---Y---*/
  Acc_angle_y = (atan(-1*(Acc_rawX)/sqrt(pow((Acc_rawY),2) + pow((Acc_rawZ),2)))*rad_to_deg) - Acc_angle_error_y;    
- 
  /*Uncoment the rest of the serial prines
  * I only print the Y raw acceleration value */
  //Serial.print("AccX raw: ");
@@ -110,17 +110,48 @@ void loop() {
  //Serial.print("AccY raw: ");
  //Serial.print(Acc_rawY);
  //Serial.print("   |   ");
- Serial.print("AccZ raw: ");
- Serial.print(Acc_rawZ);
- Serial.print("   |   ");
+ //Serial.print("AccZ raw: ");
+
+  long int    lastDebounceTime = millis();
+  
+  
+  if(lastDebounceTime > 1000){
+        
+        
+    }
+ 
+ if(Acc_rawZ>0){
+  dandoPassada = true;
+ }else{
+  dandoPassada = false;
+ }
+ 
+ if((Acc_rawZ >0.9) ){
+    steps++;
+    int passada = lastDebounceTime - startTemp;
+    startTemp = lastDebounceTime;
+
+    Serial.print("Tempo: ");
+    Serial.print(passada);
+    Serial.print("Passos: ");
+    Serial.print(steps);
+    Serial.print("\n");
+    delay(350);
+ }
+  
+ 
+ 
+ 
+ //Serial.print("   |   ");
  //Serial.print("AccX angle: ");
  //Serial.print(Acc_angle_x);
  //Serial.print("   |   ");
- Serial.print("AccY angle: ");
- Serial.print(Acc_angle_y);
- Serial.println(" ");
+ //Serial.print("AccY angle: ");
+ //Serial.print(Acc_angle_y);
+ //Serial.println(" ");
 
 
 
  
 }
+ 
