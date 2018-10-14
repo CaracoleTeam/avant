@@ -1,15 +1,7 @@
-/* http://www.youtube.com/c/electronoobs
- * 
- * This is an example where we configure te data of the MPU6050
- * and read the Acceleration data and print it to the serial monitor
- * 
- * Arduino pin    |   MPU6050
- * 5V             |   Vcc
- * GND            |   GND
- * A4             |   SDA
- * A5             |   SCL
- */
- 
+#include <AltSoftSerial.h>
+AltSoftSerial BTserial; 
+
+
 //Includes
 #include <Wire.h>
 
@@ -21,7 +13,7 @@ float Acc_rawX, Acc_rawY, Acc_rawZ;    //Here we store the raw data read
 float Acc_angle_x, Acc_angle_y;          //Here we store the angle value obtained with Acc data
 float Acc_angle_error_x, Acc_angle_error_y; //Here we store the initial Acc data error
 
-
+int passada = 0;
 
 
 
@@ -40,7 +32,7 @@ void setup() {
 
   Serial.begin(9600);                     //Remember to set this same baud rate to the serial monitor  
 
-
+  BTserial.begin(9600);
 
 /*Here we calculate the acc data error before we start the loop
  * I make the mean of 200 values, that should be enough*/
@@ -115,8 +107,8 @@ void loop() {
   long int    lastDebounceTime = millis();
   
   
-  if(lastDebounceTime > 1000){
-        
+  if((lastDebounceTime - startTemp) > 10000){
+        startTemp = lastDebounceTime;
         
     }
  
@@ -125,19 +117,23 @@ void loop() {
  }else{
   dandoPassada = false;
  }
- 
- if((Acc_rawZ >0.9) ){
-    steps++;
-    int passada = lastDebounceTime - startTemp;
-    startTemp = lastDebounceTime;
 
-    Serial.print("Tempo: ");
-    Serial.print(passada);
-    Serial.print("Passos: ");
-    Serial.print(steps);
-    Serial.print("\n");
-    delay(350);
- }
+  
+ Serial.print(Acc_rawX);
+ Serial.print(",");
+ Serial.print(Acc_rawY);
+ Serial.print(",");
+ Serial.print(Acc_rawZ);
+ Serial.print(",");
+ Serial.print(Acc_angle_x);
+ Serial.print(",");
+ Serial.print(Acc_angle_y);
+ Serial.print(",");
+ Serial.print(lastDebounceTime);
+ Serial.print("\r\n");
+ 
+
+ 
   
  
  

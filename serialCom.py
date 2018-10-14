@@ -21,40 +21,58 @@ def getArduinoPort():
     raise Exception('Arduino não conectado')
 
 
-ser = serial.Serial(getArduinoPort(),115200)
+ser = serial.Serial("/dev/ttyUSB0",9200)
 
-x = []
-y = []
-z = []
-
-index = 0;
 
 print("Conectando ao arduino arduino...")
-while index < 5 :
-    print(ser.readline())
-    index +=1 
-ser.write(struct.pack("B",int(input("Digite um numero para comecar>> "))))
 
-index = 0 
 
-while index<4:
-    print(ser.readline())
-    index += 1
-
-index = 0
-
-while index<100:
-    ax = ser.readline()
-    ax = ax.decode("utf-8")
-
-    axis  = re.findall(r'\d+\.\d+',ax)
-    
-    if(2<=len(axis)):
-        print(axis[2])
-        x.append(axis[2])
-    index += 1
-
-plt.plot(x)
-plt.show()
 ser.flush()
-ser.close()
+#nums = re.compile()
+
+test = open("Dados.csv","w")
+test.write("Acc(X),Acc(Y),Acc(Z),Angulo(X),Angulo(Y),Tempo\n")
+
+
+accX = []
+accY = []
+accZ = []
+angX = []
+angY = []
+
+try:
+    while True:
+        rawValue = str(ser.readline())
+
+        try:
+            values = re.findall(r"[+-]?\d+(?:\.\d+)?",rawValue)
+        except AttributeError:
+            print("-")
+        
+        writeData = ""
+
+        for a in values:
+            writeData += a +","
+        
+        accX.append(values[0])
+        accY.append(values[1])
+        accZ.append(values[2])
+        angX.append(values[3])
+        angY.append(values[4])
+
+        print(writeData)
+        test.write(writeData+"\n")
+except KeyboardInterrupt:
+    plt.plot(accX)
+    plt.show()
+
+    ser.close()
+
+        
+    
+    
+    
+    
+    
+
+
